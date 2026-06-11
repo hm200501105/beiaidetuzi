@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>古代生存指南：你最适合打什么工</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #1a1c2c;
+    color: #f4f4f4;
+    min-height: 100vh;
+    overflow-x: hidden;
+    image-rendering: pixelated;
+}
+
+.container { max-width: 420px; margin: 0 auto; min-height: 100vh; position: relative; }
+
+.page { display: none; min-height: 100vh; padding: 30px 20px; animation: fadeIn 0.3s ease; }
+.page.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── 像素风通用 ── */
+.pixel-border {
+    border: 4px solid #f4f4f4;
+    box-shadow:
+        inset -4px -4px 0 #5d275d,
+        inset 4px 4px 0 #b13e53,
+        0 0 0 4px #1a1c2c;
+}
+.pixel-box {
+    background: #262b44;
+    border: 3px solid #5d275d;
+    box-shadow: 4px 4px 0 #0d0f14;
+}
+.pixel-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 2;
+}
+
+/* 8-bit 调色板 */
+:root {
+    --pixel-dark: #1a1c2c;
+    --pixel-purple: #5d275d;
+    --pixel-red: #b13e53;
+    --pixel-orange: #ef7d57;
+    --pixel-yellow: #ffcd75;
+    --pixel-green: #38b764;
+    --pixel-blue: #29366f;
+    --pixel-sky: #41a6f6;
+    --pixel-white: #f4f4f4;
+    --pixel-gray: #73eff7;
+    --pixel-dark2: #262b44;
+}
+
+/* ── 开屏页 ── */
+#page-start {
+    background: var(--pixel-dark);
+    text-align: center;
+}
+.start-pixel-art {
+    font-size: 48px;
+    margin-bottom: 20px;
+    animation: bounce 1s ease-in-out infinite;
+}
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.start-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--pixel-yellow);
+    margin-bottom: 8px;
+    text-shadow: 3px 3px 0 var(--pixel-purple);
+    line-height: 2.2;
+}
+.start-subtitle {
+    font-size: 18px;
+    color: var(--pixel-orange);
+    margin-bottom: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.start-sub {
+    font-size: 14px;
+    color: var(--pixel-gray);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.start-hint {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--pixel-green);
+    margin-bottom: 24px;
+    animation: blink 1.2s step-end infinite;
+}
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+.btn-start {
+    background: var(--pixel-green);
+    color: var(--pixel-dark);
+    border: none;
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+    box-shadow: 4px 4px 0 #257953;
+    transition: all 0.1s;
+    border-radius: 0;
+}
+.btn-start:active { transform: translate(4px, 4px); box-shadow: none; }
+
+/* ── 答题页 ── */
+#page-quiz {
+    justify-content: flex-start;
+    padding-top: 20px;
+    position: relative;
+    overflow: hidden;
+    background: var(--pixel-dark);
+}
+
+.scene-bg {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    opacity: 1; overflow: hidden;
+}
+.scene-bg.fading { opacity: 0; transition: opacity 0.2s ease; }
+.scene-bg.showing { opacity: 1; transition: opacity 0.3s ease; }
+.scene-bg .scene-gradient { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.scene-bg .scene-elements { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.3; }
+.scene-bg .scene-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(26,28,44,0.3) 0%, rgba(26,28,44,0.6) 40%, rgba(26,28,44,0.9) 100%);
+}
+
+/* 像素风背景 */
+.bg-palace .scene-gradient { background: linear-gradient(180deg, #5d275d 0%, #3a1a3a 50%, #1a1c2c 100%); }
+.bg-market .scene-gradient { background: linear-gradient(180deg, #ef7d57 0%, #5d275d 50%, #1a1c2c 100%); }
+.bg-study .scene-gradient { background: linear-gradient(180deg, #38b764 0%, #257953 50%, #1a1c2c 100%); }
+.bg-wild .scene-gradient { background: linear-gradient(180deg, #29366f 0%, #1a1c2c 50%, #0d0f14 100%); }
+.bg-court .scene-gradient { background: linear-gradient(180deg, #b13e53 0%, #5d275d 50%, #1a1c2c 100%); }
+.bg-road .scene-gradient { background: linear-gradient(180deg, #73eff7 0%, #29366f 50%, #1a1c2c 100%); }
+.bg-feast .scene-gradient { background: linear-gradient(180deg, #ffcd75 0%, #ef7d57 50%, #1a1c2c 100%); }
+.bg-border .scene-gradient { background: linear-gradient(180deg, #b13e53 0%, #29366f 50%, #1a1c2c 100%); }
+.bg-treasury .scene-gradient { background: linear-gradient(180deg, #ffcd75 0%, #5d275d 50%, #1a1c2c 100%); }
+.bg-exam .scene-gradient { background: linear-gradient(180deg, #41a6f6 0%, #29366f 50%, #1a1c2c 100%); }
+.bg-battle .scene-gradient { background: linear-gradient(180deg, #b13e53 0%, #1a1c2c 50%, #0d0f14 100%); }
+.bg-betray .scene-gradient { background: linear-gradient(180deg, #262b44 0%, #0d0f14 50%, #1a1c2c 100%); }
+.bg-duel .scene-gradient { background: linear-gradient(180deg, #5d275d 0%, #b13e53 50%, #1a1c2c 100%); }
+.bg-power .scene-gradient { background: linear-gradient(180deg, #ffcd75 0%, #b13e53 50%, #1a1c2c 100%); }
+.bg-disciples .scene-gradient { background: linear-gradient(180deg, #38b764 0%, #29366f 50%, #1a1c2c 100%); }
+.bg-moonnight .scene-gradient { background: linear-gradient(180deg, #29366f 0%, #1a1c2c 50%, #0d0f14 100%); }
+.bg-throne .scene-gradient { background: linear-gradient(180deg, #b13e53 0%, #5d275d 50%, #1a1c2c 100%); }
+.bg-village .scene-gradient { background: linear-gradient(180deg, #38b764 0%, #257953 50%, #1a1c2c 100%); }
+.bg-horizon .scene-gradient { background: linear-gradient(180deg, #41a6f6 0%, #ef7d57 50%, #1a1c2c 100%); }
+.bg-legacy .scene-gradient { background: linear-gradient(180deg, #73eff7 0%, #262b44 50%, #1a1c2c 100%); }
+
+.quiz-content { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+.quiz-progress { width: 100%; margin-bottom: 16px; }
+.progress-bar { width: 100%; height: 8px; background: var(--pixel-dark2); border: 2px solid var(--pixel-purple); }
+.progress-fill { height: 100%; background: var(--pixel-green); transition: width 0.3s step-end; }
+.progress-text { text-align: right; font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--pixel-gray); margin-top: 4px; }
+
+.quiz-chapter {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px; color: var(--pixel-yellow); letter-spacing: 1px; margin-bottom: 10px;
+}
+
+.quiz-scene {
+    font-size: 13px; color: var(--pixel-gray); line-height: 1.6; text-align: center;
+    margin-bottom: 12px; max-width: 340px;
+}
+
+.quiz-question {
+    font-size: 17px; font-weight: bold; line-height: 1.6; text-align: center;
+    margin-bottom: 12px; color: var(--pixel-white);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.quiz-illustration {
+    width: 100%; height: 120px; position: relative; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--pixel-dark2);
+    border: 3px solid var(--pixel-purple);
+    box-shadow: 4px 4px 0 #0d0f14;
+    overflow: hidden;
+}
+.quiz-illustration canvas {
+    width: 100%; height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.quiz-options { width: 100%; }
+
+.option-btn {
+    width: 100%;
+    background: var(--pixel-dark2);
+    border: 3px solid var(--pixel-purple);
+    color: var(--pixel-white);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 14px; line-height: 1.5;
+    text-align: left; cursor: pointer;
+    transition: all 0.1s;
+    display: flex; align-items: flex-start; gap: 10px;
+    box-shadow: 3px 3px 0 #0d0f14;
+    border-radius: 0;
+}
+.option-btn:active, .option-btn.selected {
+    background: var(--pixel-purple);
+    border-color: var(--pixel-yellow);
+    transform: translate(3px, 3px);
+    box-shadow: none;
+}
+.option-label {
+    flex-shrink: 0; width: 24px; height: 24px;
+    background: var(--pixel-red); color: var(--pixel-white);
+    font-size: 12px; font-weight: bold; font-family: 'Press Start 2P', monospace;
+    display: flex; align-items: center; justify-content: center;
+}
+.option-btn.selected .option-label { background: var(--pixel-yellow); color: var(--pixel-dark); }
+
+/* ── 加载页 ── */
+#page-loading { background: var(--pixel-dark); text-align: center; }
+.loading-icon { font-size: 48px; margin-bottom: 20px; animation: loadSpin 0.5s steps(4) infinite; }
+@keyframes loadSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+.loading-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px; color: var(--pixel-yellow); letter-spacing: 1px;
+}
+.loading-bar { width: 200px; height: 12px; border: 3px solid var(--pixel-purple); margin-top: 16px; background: var(--pixel-dark2); }
+.loading-bar-fill { height: 100%; background: var(--pixel-green); animation: loadBar 2.5s steps(10) forwards; }
+@keyframes loadBar { from { width: 0; } to { width: 100%; } }
+
+/* ── 结果页 ── */
+#page-result { background: var(--pixel-dark); padding: 20px 16px; }
+
+.result-portrait {
+    width: 100%; height: 160px; position: relative; overflow: hidden;
+    border: 4px solid var(--pixel-yellow);
+    box-shadow: 6px 6px 0 #0d0f14;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0;
+}
+.result-portrait .portrait-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.result-portrait .portrait-figure { position: relative; z-index: 1; font-size: 80px; filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.5)); }
+.result-portrait .portrait-particles { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; opacity: 0.5; }
+
+.portrait-chancellor .portrait-bg { background: linear-gradient(135deg, var(--pixel-red) 0%, var(--pixel-yellow) 100%); }
+.portrait-teacher .portrait-bg { background: linear-gradient(135deg, var(--pixel-blue) 0%, var(--pixel-sky) 100%); }
+.portrait-advisor .portrait-bg { background: linear-gradient(135deg, var(--pixel-purple) 0%, #9b59b6 100%); }
+.portrait-merchant .portrait-bg { background: linear-gradient(135deg, var(--pixel-orange) 0%, var(--pixel-yellow) 100%); }
+.portrait-chef .portrait-bg { background: linear-gradient(135deg, var(--pixel-red) 0%, var(--pixel-orange) 100%); }
+.portrait-bizmaster .portrait-bg { background: linear-gradient(135deg, var(--pixel-green) 0%, var(--pixel-yellow) 100%); }
+.portrait-swordsman .portrait-bg { background: linear-gradient(135deg, var(--pixel-sky) 0%, var(--pixel-blue) 100%); }
+.portrait-traveler .portrait-bg { background: linear-gradient(135deg, var(--pixel-green) 0%, var(--pixel-sky) 100%); }
+.portrait-hermit .portrait-bg { background: linear-gradient(135deg, #f4f4f4 0%, var(--pixel-gray) 100%); }
+.portrait-hanlin .portrait-bg { background: linear-gradient(135deg, var(--pixel-sky) 0%, var(--pixel-purple) 100%); }
+.portrait-general .portrait-bg { background: linear-gradient(135deg, var(--pixel-red) 0%, #8b0000 100%); }
+.portrait-spy .portrait-bg { background: linear-gradient(135deg, #0d0f14 0%, var(--pixel-purple) 100%); }
+
+.result-scroll {
+    width: 100%;
+    background: var(--pixel-dark2);
+    border: 4px solid var(--pixel-purple);
+    border-top: none;
+    box-shadow: 6px 6px 0 #0d0f14;
+    padding: 24px 18px; color: var(--pixel-white);
+    text-align: center; position: relative;
+}
+.result-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px; color: var(--pixel-yellow); letter-spacing: 2px; margin-bottom: 6px;
+}
+.result-decree { font-size: 12px; color: var(--pixel-gray); margin-bottom: 16px; }
+.result-icon { font-size: 40px; margin-bottom: 8px; }
+.result-title {
+    font-size: 24px; font-weight: 900; color: var(--pixel-yellow); margin-bottom: 4px;
+    text-shadow: 3px 3px 0 var(--pixel-purple);
+    letter-spacing: 4px;
+}
+.result-subtitle { font-size: 13px; color: var(--pixel-orange); letter-spacing: 2px; margin-bottom: 16px; }
+.result-desc { font-size: 13px; color: var(--pixel-gray); line-height: 1.8; text-align: left; margin-bottom: 16px; }
+.result-modern {
+    background: var(--pixel-blue); border: 2px solid var(--pixel-purple);
+    padding: 10px 14px; margin-bottom: 12px;
+}
+.result-modern-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--pixel-green); margin-bottom: 4px; }
+.result-modern-text { font-size: 14px; font-weight: bold; color: var(--pixel-yellow); }
+.result-rare { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--pixel-red); }
+.result-stamp {
+    position: absolute; right: 12px; top: 12px; width: 50px; height: 50px;
+    border: 3px solid var(--pixel-red);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--pixel-red); font-weight: 900;
+    transform: rotate(-10deg);
+}
+
+.result-actions { width: 100%; margin-top: 16px; display: flex; gap: 10px; }
+.btn-share, .btn-retry {
+    flex: 1; padding: 12px 0; font-size: 14px; font-weight: bold;
+    cursor: pointer; border: none; transition: all 0.1s;
+    box-shadow: 4px 4px 0 #0d0f14; border-radius: 0;
+}
+.btn-share { background: var(--pixel-green); color: var(--pixel-dark); }
+.btn-retry { background: var(--pixel-dark2); border: 3px solid var(--pixel-purple); color: var(--pixel-yellow); }
+.btn-share:active, .btn-retry:active { transform: translate(4px, 4px); box-shadow: none; }
+
+.result-partner {
+    width: 100%; margin-top: 12px; padding: 12px;
+    background: var(--pixel-dark2); border: 3px solid var(--pixel-purple);
+    box-shadow: 4px 4px 0 #0d0f14; text-align: center;
+}
+.result-partner-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--pixel-gray); margin-bottom: 4px; }
+.result-partner-text { font-size: 13px; color: var(--pixel-orange); font-weight: bold; }
+
+/* ── 海报弹窗 ── */
+.poster-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(13,15,20,0.95); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+}
+.poster-overlay.active { display: flex; flex-direction: column; }
+.poster-canvas { max-width: 100%; max-height: 70vh; }
+.poster-tip { color: var(--pixel-gray); font-size: 12px; margin-top: 12px; text-align: center; }
+.btn-close-poster {
+    margin-top: 12px; background: var(--pixel-dark2); border: 3px solid var(--pixel-purple);
+    color: var(--pixel-yellow); padding: 10px 28px; font-size: 13px; cursor: pointer;
+    box-shadow: 3px 3px 0 #0d0f14;
+}
+.btn-close-poster:active { transform: translate(3px,3px); box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="page active" id="page-start">
+    <div class="start-pixel-art">⚔️</div>
+    <div class="start-title">ANCIENT<br>CAREER TEST</div>
+    <div class="start-subtitle">古代生存指南</div>
+    <div class="start-sub">你最适合打什么工</div>
+    <div class="start-hint">- PRESS START -</div>
+    <button class="btn-start" onclick="startQuiz()">开始穿越</button>
+</div>
+
+<div class="page" id="page-quiz">
+    <div class="scene-bg" id="sceneBg">
+        <div class="scene-gradient"></div>
+        <div class="scene-elements"></div>
+        <div class="scene-overlay"></div>
+    </div>
+    <div class="quiz-content">
+        <div class="quiz-progress">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-text" id="progressText">01/10</div>
+        </div>
+        <div class="quiz-chapter" id="quizChapter"></div>
+        <div class="quiz-scene" id="quizScene"></div>
+        <div class="quiz-question" id="quizQuestion"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-illustration" id="quizIllust"><canvas id="illustCanvas" width="128" height="40"></canvas></div>
+    </div>
+</div>
+
+<div class="page" id="page-loading">
+    <div class="loading-icon">🔮</div>
+    <div class="loading-text">CALCULATING...</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+</div>
+
+<div class="page" id="page-result">
+    <div class="result-portrait" id="resultPortrait">
+        <div class="portrait-bg"></div>
+        <div class="portrait-particles" id="portraitParticles"></div>
+        <div class="portrait-figure" id="portraitFigure"></div>
+    </div>
+    <div class="result-scroll" id="resultScroll">
+        <div class="result-stamp">钦此</div>
+        <div class="result-header">RESULT</div>
+        <div class="result-decree">皇帝诏曰</div>
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-subtitle" id="resultSubtitle"></div>
+        <div class="result-desc" id="resultDesc"></div>
+        <div class="result-modern">
+            <div class="result-modern-label">JOB TRUTH</div>
+            <div class="result-modern-text" id="resultModern"></div>
+        </div>
+        <div class="result-rare" id="resultRare"></div>
+    </div>
+    <div class="result-partner" id="resultPartner">
+        <div class="result-partner-label">BEST PARTNER</div>
+        <div class="result-partner-text" id="resultPartnerText"></div>
+    </div>
+    <div class="result-actions">
+        <button class="btn-share" onclick="showPoster()">生成海报</button>
+        <button class="btn-retry" onclick="retry()">再来一次</button>
+    </div>
+</div>
+
+</div>
+
+<div class="poster-overlay" id="posterOverlay">
+    <canvas id="posterCanvas" class="poster-canvas"></canvas>
+    <div class="poster-tip">长按保存图片分享</div>
+    <button class="btn-close-poster" onclick="closePoster()">关闭</button>
+</div>
+
+<script>
+const SHARE_URL = 'https://your-domain.com/ancient-career-test.html';
+
+// ── 像素画绘制系统 ──
+const P={skin:'#ffcd75',hair:'#5d275d',cloth:'#b13e53',cloth2:'#29366f',gold:'#ffcd75',red:'#b13e53',green:'#38b764',blue:'#41a6f6',dark:'#1a1c2c',gray:'#566c86',white:'#f4f4f4',orange:'#ef7d57',purple:'#5d275d',fire:'#ef7d57',fire2:'#ffcd75',brown:'#73452e',sky:'#73eff7',wood:'#a7724a'};
+
+function drawPerson(c,x,y,hc,cc,dir){c.fillStyle=P.skin;c.fillRect(x,y,3,3);c.fillStyle=hc;c.fillRect(x,y,3,1);c.fillRect(dir==='l'?x+2:x,y,1,2);c.fillStyle=cc;c.fillRect(x,y+3,3,3);c.fillRect(x-1,y+3,1,2);c.fillRect(x+3,y+3,1,2);c.fillStyle=P.dark;c.fillRect(x,y+6,1,2);c.fillRect(x+2,y+6,1,2);}
+function drawBldg(c,x,y,w,h,rc,wc){c.fillStyle=rc;for(let i=0;i<3;i++)c.fillRect(x-1+i,y-2+i,w+2-i*2,1);c.fillStyle=wc;c.fillRect(x,y+1,w,h);c.fillStyle=P.dark;c.fillRect(x+Math.floor(w/2)-1,y+h-3,2,3);}
+function drawFl(c,x,y){c.fillStyle=P.fire;c.fillRect(x,y+1,3,2);c.fillStyle=P.fire2;c.fillRect(x+1,y,1,1);}
+function drawTr(c,x,y,cl){c.fillStyle=cl||P.green;c.fillRect(x,y,5,1);c.fillRect(x+1,y-1,3,1);c.fillRect(x+2,y-2,1,1);c.fillStyle=P.brown;c.fillRect(x+2,y+1,1,3);}
+function drawMn(c,x,y){c.fillStyle=P.gold;c.fillRect(x,y,4,4);c.fillStyle=P.dark;c.fillRect(x,y,2,2);}
+function drawSw(c,x,y){c.fillStyle=P.gray;c.fillRect(x,y,1,5);c.fillStyle=P.brown;c.fillRect(x-1,y+5,3,1);}
+function drawSc(c,x,y){c.fillStyle=P.gold;c.fillRect(x,y,5,4);c.fillStyle=P.dark;c.fillRect(x+1,y+1,3,2);}
+function drawCr(c,x,y){c.fillStyle=P.gold;c.fillRect(x,y+1,5,2);c.fillRect(x,y,1,1);c.fillRect(x+2,y,1,1);c.fillRect(x+4,y,1,1);}
+function drawHr(c,x,y){c.fillStyle=P.brown;c.fillRect(x,y+1,5,3);c.fillRect(x+5,y,2,2);c.fillStyle=P.dark;c.fillRect(x,y+4,1,2);c.fillRect(x+3,y+4,1,2);}
+function drawFg(c,x,y,cl){c.fillStyle=P.brown;c.fillRect(x,y,1,7);c.fillStyle=cl||P.red;c.fillRect(x+1,y,4,3);}
+
+const SCENE_DRAW={
+    q1(c){c.fillStyle=P.gold;c.fillRect(60,2,2,4);c.fillRect(62,5,2,4);c.fillRect(60,8,2,4);drawPerson(c,62,20,P.hair,P.cloth,'r');c.fillStyle=P.sky;c.fillRect(55,18,2,2);c.fillRect(70,22,2,2);},
+    q2a(c){drawBldg(c,50,5,28,16,P.red,P.gold);drawCr(c,61,2);drawPerson(c,62,22,P.hair,P.red,'r');drawPerson(c,40,28,P.dark,P.gray,'r');drawPerson(c,80,28,P.dark,P.gray,'l');},
+    q2b(c){drawBldg(c,10,10,20,14,P.red,P.wood);drawBldg(c,90,10,20,14,P.red,P.wood);c.fillStyle=P.red;c.fillRect(20,4,3,5);c.fillRect(100,4,3,5);drawPerson(c,60,20,P.hair,P.orange,'r');c.fillStyle=P.wood;c.fillRect(68,24,6,4);drawPerson(c,45,26,P.dark,P.cloth2,'r');},
+    q2c(c){drawTr(c,8,18);drawTr(c,16,15);drawTr(c,108,16);c.fillStyle=P.wood;c.fillRect(55,26,18,2);c.fillRect(57,28,2,4);c.fillRect(69,28,2,4);drawSc(c,60,22);drawPerson(c,62,16,P.hair,P.cloth2,'r');drawMn(c,100,4);},
+    q2d(c){drawMn(c,100,4);drawFl(c,62,28);drawFl(c,60,30);c.fillStyle=P.brown;c.fillRect(58,32,12,1);drawPerson(c,40,24,P.dark,P.brown,'r');drawPerson(c,80,24,P.dark,P.brown,'l');drawPerson(c,62,18,P.hair,P.cloth,'r');drawSw(c,86,22);},
+    q3a(c){drawPerson(c,62,18,P.hair,P.cloth,'r');drawSc(c,42,20);drawSc(c,82,20);c.fillStyle=P.gold;c.fillRect(44,18,3,1);c.fillRect(84,18,3,1);drawBldg(c,95,5,18,12,P.red,P.gray);},
+    q3b(c){drawPerson(c,62,18,P.hair,P.cloth,'r');drawPerson(c,35,20,P.dark,P.cloth2,'r');drawPerson(c,88,20,P.brown,P.green,'l');drawSw(c,92,18);c.fillStyle=P.gold;c.fillRect(48,24,2,1);c.fillRect(78,24,2,1);},
+    q4a(c){drawMn(c,10,4);drawPerson(c,62,18,P.hair,P.cloth,'r');drawSc(c,72,22);c.fillStyle=P.fire2;c.fillRect(52,28,2,3);c.fillRect(53,27,1,1);drawPerson(c,42,26,P.dark,P.dark,'r');},
+    q4b(c){drawPerson(c,30,20,P.dark,P.red,'r');drawSw(c,36,18);drawPerson(c,55,24,P.hair,P.brown,'l');drawPerson(c,65,24,P.hair,P.brown,'l');drawPerson(c,90,20,P.hair,P.cloth,'l');c.fillStyle=P.red;c.fillRect(32,16,3,1);},
+    q5(c){drawCr(c,61,4);drawPerson(c,62,8,P.dark,P.gold,'r');c.fillStyle=P.gold;c.fillRect(55,6,18,1);drawPerson(c,62,26,P.hair,P.cloth,'r');drawPerson(c,40,30,P.dark,P.gray,'r');drawPerson(c,84,30,P.dark,P.gray,'l');},
+    q6a(c){drawBldg(c,15,12,16,12,P.red,P.gray);drawFg(c,100,8,P.red);drawPerson(c,105,18,P.dark,P.red,'l');drawPerson(c,62,20,P.hair,P.cloth,'r');c.fillStyle=P.gray;c.fillRect(85,26,20,2);},
+    q6b(c){c.fillStyle=P.gold;for(let i=0;i<5;i++)c.fillRect(20+i*6,28-i*2,4,3);drawPerson(c,62,18,P.hair,P.cloth,'r');drawPerson(c,48,10,P.dark,P.gold,'r');drawCr(c,49,7);c.fillStyle=P.gray;c.fillRect(80,20,8,12);},
+    q6c(c){drawPerson(c,62,12,P.hair,P.cloth,'r');drawSc(c,68,16);drawPerson(c,35,22,P.dark,P.cloth2,'r');drawPerson(c,50,22,P.dark,P.cloth2,'r');drawPerson(c,85,22,P.dark,P.cloth2,'l');c.fillStyle=P.gold;c.fillRect(86,26,3,2);},
+    q6d(c){drawPerson(c,25,18,P.hair,P.red,'r');drawHr(c,15,22);drawFg(c,30,10,P.red);for(let i=0;i<4;i++)drawPerson(c,75+i*10,20,P.dark,P.dark,'l');drawFg(c,105,10,P.purple);},
+    q7a(c){drawPerson(c,55,18,P.hair,P.cloth,'r');drawPerson(c,80,20,P.dark,P.gray,'l');drawSw(c,73,22);drawSc(c,38,16);drawMn(c,15,5);c.fillStyle=P.red;c.fillRect(76,16,2,1);},
+    q7b(c){drawPerson(c,40,18,P.hair,P.cloth,'r');drawSw(c,46,16);drawPerson(c,80,18,P.dark,P.purple,'l');drawSw(c,78,16);c.fillStyle=P.fire;c.fillRect(60,20,2,1);c.fillRect(62,21,2,1);drawFl(c,58,32);drawFl(c,68,32);},
+    q8a(c){drawPerson(c,48,8,P.dark,P.gold,'r');drawCr(c,49,5);c.fillStyle=P.red;c.fillRect(55,10,2,1);drawPerson(c,62,22,P.hair,P.cloth,'r');c.fillStyle=P.gold;c.fillRect(55,26,3,2);c.fillRect(60,26,3,2);c.fillRect(65,26,3,2);},
+    q8b(c){drawPerson(c,60,10,P.hair,P.cloth,'r');c.fillStyle=P.gold;c.fillRect(62,7,1,1);for(let i=0;i<5;i++)drawPerson(c,30+i*16,28,P.dark,P.cloth2,'r');},
+    q9(c){drawMn(c,58,3);drawPerson(c,48,20,P.hair,P.cloth,'r');drawPerson(c,72,20,P.gray,P.cloth2,'l');c.fillStyle=P.wood;c.fillRect(58,28,12,2);c.fillStyle=P.white;c.fillRect(61,26,2,2);c.fillRect(66,26,2,2);drawTr(c,10,28);drawTr(c,110,28);},
+    q10a(c){c.fillStyle=P.wood;c.fillRect(30,22,20,3);c.fillRect(32,25,3,4);c.fillRect(45,25,3,4);drawPerson(c,38,18,P.gray,P.gold,'r');drawCr(c,39,15);drawPerson(c,70,20,P.hair,P.cloth,'l');c.fillStyle=P.gold;c.fillRect(58,24,4,1);},
+    q10b(c){drawBldg(c,20,14,16,12,P.brown,P.wood);drawPerson(c,62,22,P.hair,P.cloth,'r');c.fillStyle=P.gold;c.fillRect(66,26,4,3);drawTr(c,95,22);drawPerson(c,85,26,P.brown,P.brown,'l');},
+    q10c(c){drawPerson(c,45,22,P.hair,P.cloth,'r');drawHr(c,55,24);c.fillStyle=P.orange;c.fillRect(90,12,8,4);c.fillRect(92,10,4,2);c.fillStyle=P.fire2;c.fillRect(93,11,2,1);c.fillStyle=P.brown;c.fillRect(0,34,128,2);drawTr(c,10,26);},
+    q10d(c){drawPerson(c,55,16,P.hair,P.cloth,'r');drawSc(c,25,26);drawSw(c,62,24);c.fillStyle=P.purple;c.fillRect(95,24,5,5);c.fillRect(96,23,3,1);c.fillStyle=P.gold;c.fillRect(97,25,1,1);c.fillStyle=P.wood;c.fillRect(20,32,90,2);}
+};
+function renderIllustration(qKey){const cv=document.getElementById('illustCanvas'),cx=cv.getContext('2d');cx.clearRect(0,0,128,40);(SCENE_DRAW[qKey]||SCENE_DRAW.q1)(cx);}
+
+const QUESTIONS = {
+    q1:{chapter:'CHAPTER 1',bg:'bg-wild',scene:'一道闪电劈下，你眼前一黑……再睁眼时，世界已完全不同。',question:'你穿越了！睁眼发现自己在……',options:[{label:'A',text:'金碧辉煌的皇宫大殿，太监宫女跪了一地',next:'q2a',tags:['power']},{label:'B',text:'人声鼎沸的集市，旁边摆着你的金银算盘',next:'q2b',tags:['wealth']},{label:'C',text:'清幽雅致的书院，桌上是你写了一半的诗',next:'q2c',tags:['scholar']},{label:'D',text:'月黑风高的荒野，远处有一群人在烤羊腿',next:'q2d',tags:['adventure']}]},
+    q2a:{chapter:'CHAPTER 1',bg:'bg-palace',scene:'你身着官服，宫廷的空气中弥漫着龙涎香。',question:'太监急匆匆跑来："大人，皇上急召！"你……',options:[{label:'A',text:'整理衣冠，从容赴召——我早有准备',next:'q3a',tags:['strategy']},{label:'B',text:'先问清楚是赏还是罚，做好两手准备',next:'q3a',tags:['cautious']},{label:'C',text:'顺路看了眼御膳房菜单，饿了',next:'q3a',tags:['life']}]},
+    q2b:{chapter:'CHAPTER 1',bg:'bg-market',scene:'你是这条街最大的铺子掌柜，伙计们忙得脚不沾地。',question:'伙计跑来："掌柜的，隔壁王记降价了！"你……',options:[{label:'A',text:'降价？我们升级品质，走高端路线',next:'q3a',tags:['strategy']},{label:'B',text:'去找王记老板喝茶，看能不能合作',next:'q3a',tags:['social']},{label:'C',text:'无所谓，关店去游山玩水',next:'q3a',tags:['freedom']}]},
+    q2c:{chapter:'CHAPTER 1',bg:'bg-study',scene:'窗外竹影婆娑，案上墨香四溢，你的诗名已传遍书院。',question:'同窗递来帖子："诗会前三可面圣！"你……',options:[{label:'A',text:'必须参加，这是入仕的好机会',next:'q3b',tags:['ambition']},{label:'B',text:'参加，但只想切磋，不在意名次',next:'q3b',tags:['pure']},{label:'C',text:'比起诗会，我更想去山里采风',next:'q3b',tags:['freedom']}]},
+    q2d:{chapter:'CHAPTER 1',bg:'bg-wild',scene:'篝火噼啪作响，空气中飘着烤肉香。一群彪悍的人盯着你。',question:'大哥拍你肩膀："兄弟，入伙吗？"你……',options:[{label:'A',text:'看看你们实力再说——我只跟强者为伍',next:'q3b',tags:['strength']},{label:'B',text:'入伙可以，但我要当军师',next:'q3b',tags:['strategy']},{label:'C',text:'谢了，我独行惯了',next:'q3b',tags:['lone']}]},
+    q3a:{chapter:'CHAPTER 2',bg:'bg-road',scene:'你在城中站稳脚跟，名声越来越大。一天同时收到两封信。',question:'你先拆开哪一封？',options:[{label:'A',text:'丞相府邀请函：请你赴宴议事',next:'q4a',tags:['power']},{label:'B',text:'江南首富合作信：一起做笔大买卖',next:'q4a',tags:['wealth']},{label:'C',text:'匿名信：有人要对你不利，附了证据',next:'q4a',tags:['intel']}]},
+    q3b:{chapter:'CHAPTER 2',bg:'bg-road',scene:'你的名声传开了。两拨人同时找上门来。',question:'你选择跟谁走？',options:[{label:'A',text:'知府请你当幕僚——庙堂之路',next:'q4b',tags:['power']},{label:'B',text:'神秘剑客邀你同行，说要带你见真正的江湖',next:'q4b',tags:['adventure']},{label:'C',text:'老者说你骨骼清奇，要传你一门绝学',next:'q4b',tags:['cultivate']}]},
+    q4a:{chapter:'CHAPTER 2',bg:'bg-court',scene:'一天深夜，有人密报：朝中即将大变。',question:'风暴将至，你……',options:[{label:'A',text:'早就安插了自己人，稳坐钓鱼台',next:'q5',tags:['strategy']},{label:'B',text:'连夜转移资产，保住家底再说',next:'q5',tags:['wealth']},{label:'C',text:'写了份详细情报分析呈给上面',next:'q5',tags:['intel']}]},
+    q4b:{chapter:'CHAPTER 2',bg:'bg-border',scene:'路上遇到官兵当街欺压百姓，众人敢怒不敢言。',question:'你……',options:[{label:'A',text:'拔刀相助，正义不能等',next:'q5',tags:['justice']},{label:'B',text:'记下番号，回去写文章揭露',next:'q5',tags:['scholar']},{label:'C',text:'暗中帮百姓脱困，不留名',next:'q5',tags:['humble']}]},
+    q5:{chapter:'CHAPTER 3',bg:'bg-feast',scene:'皇帝设宴召见，金殿之上，所有人都在看着你。',question:'皇帝问你："天下之事，你最擅长什么？"',branchOptions:{palace:[{label:'A',text:'"识人用人，让每个棋子都在该在的位置"',next:'q6a',tags:['strategy']},{label:'B',text:'"广开财源，让国库充盈、百姓富足"',next:'q6b',tags:['wealth']},{label:'C',text:'"整肃吏治，臣有一套自己的规矩"',next:'q6a',tags:['strategy']},{label:'D',text:'"御驾亲征又何妨？臣愿带兵出战"',next:'q6d',tags:['military']}],market:[{label:'A',text:'"通商惠工，让天下没有难做的买卖"',next:'q6b',tags:['wealth']},{label:'B',text:'"臣能让丝绸之路重开，金银滚滚来"',next:'q6b',tags:['wealth']},{label:'C',text:'"运筹帷幄，生意场练出的本事也能治国"',next:'q6a',tags:['strategy']},{label:'D',text:'"以利聚人，以义留人——臣擅交朋友"',next:'q6a',tags:['social']}],scholar:[{label:'A',text:'"以文化人，一支笔抵十万兵"',next:'q6c',tags:['scholar']},{label:'B',text:'"兴办学堂，让天下人都能读书明理"',next:'q6c',tags:['scholar']},{label:'C',text:'"臣愿修史立传，让后人以史为鉴"',next:'q6c',tags:['scholar']},{label:'D',text:'"文能安邦，必要时笔也能做剑"',next:'q6a',tags:['strategy']}],jianghu:[{label:'A',text:'"沙场点兵，犯我疆土者虽远必诛"',next:'q6d',tags:['military']},{label:'B',text:'"暗中行事，帮陛下解决不方便解决的人"',next:'q6a',tags:['intel']},{label:'C',text:'"臣走遍江湖，天下没有臣不认识的人"',next:'q6b',tags:['social']},{label:'D',text:'"替天行道，让老百姓能安心过日子"',next:'q6d',tags:['justice']}]},options:[{label:'A',text:'"运筹帷幄，让对的人做对的事"',next:'q6a',tags:['strategy']},{label:'B',text:'"通商惠工，让天下没有难做的买卖"',next:'q6b',tags:['wealth']},{label:'C',text:'"以文化人，一支笔抵十万兵"',next:'q6c',tags:['scholar']},{label:'D',text:'"沙场点兵，犯我疆土者虽远必诛"',next:'q6d',tags:['military']}]},
+    q6a:{chapter:'CHAPTER 3',bg:'bg-border',scene:'边疆和朝堂同时出了大问题，精力只够顾一头。',question:'只能选一个先处理，你……',options:[{label:'A',text:'先稳朝堂——内部不稳，外部再强也白搭',next:'q7a',tags:['internal']},{label:'B',text:'先解边疆——外敌不除，朝堂迟早崩',next:'q7a',tags:['military']},{label:'C',text:'两手同时抓——我有方案两线作战',next:'q7a',tags:['allround']}]},
+    q6b:{chapter:'CHAPTER 3',bg:'bg-treasury',scene:'皇帝说国库空虚，问你有什么生财之道。',question:'你提出的方案是……',options:[{label:'A',text:'开海禁通商贸，让外面的钱流进来',next:'q7a',tags:['pioneer']},{label:'B',text:'改革税制，堵住贪官的口袋',next:'q7a',tags:['reform']},{label:'C',text:'发行国债，用未来的钱解现在的事',next:'q7a',tags:['finance']}]},
+    q6c:{chapter:'CHAPTER 3',bg:'bg-exam',scene:'你主持大考，发现有人舞弊，背后牵涉权贵。',question:'你……',options:[{label:'A',text:'当场揭发，公正比人情重要',next:'q7b',tags:['justice']},{label:'B',text:'收集证据，找时机连根拔起',next:'q7b',tags:['strategy']},{label:'C',text:'写文章影射此事，让舆论来解决',next:'q7b',tags:['scholar']}]},
+    q6d:{chapter:'CHAPTER 3',bg:'bg-battle',scene:'你带兵出征，敌军是你的三倍兵力。',question:'你下令……',options:[{label:'A',text:'正面硬刚——士气比兵力重要',next:'q7b',tags:['brave']},{label:'B',text:'奇袭敌后——兵不在多，在于精',next:'q7b',tags:['strategy']},{label:'C',text:'坚守不出，等敌人粮草耗尽',next:'q7b',tags:['steady']}]},
+    q7a:{chapter:'CHAPTER 4',bg:'bg-betray',scene:'你最信任的人，在背后捅了你一刀。',question:'你……',options:[{label:'A',text:'不动声色，将计就计反利用',next:'q8a',tags:['strategy']},{label:'B',text:'直接摊牌对质，给他一次解释的机会',next:'q8a',tags:['justice']},{label:'C',text:'默默切断他的一切资源，让他自己出局',next:'q8a',tags:['cold']}]},
+    q7b:{chapter:'CHAPTER 4',bg:'bg-duel',scene:'有人下战书——一决高下，输了身败名裂。',question:'你……',options:[{label:'A',text:'欣然应战，我从不怕挑战',next:'q8b',tags:['brave']},{label:'B',text:'战前做足功课，知己知彼',next:'q8b',tags:['cautious']},{label:'C',text:'接受，但把它变成公开表演赛',next:'q8b',tags:['charisma']}]},
+    q8a:{chapter:'CHAPTER 4',bg:'bg-power',scene:'皇帝封你高官厚禄，但开始忌惮你了。',question:'功高震主，你……',options:[{label:'A',text:'主动交出部分权力，让皇帝安心',next:'q9',tags:['wisdom']},{label:'B',text:'暗中培养接班人，准备功成身退',next:'q9',tags:['foresight']},{label:'C',text:'无所谓，实力在手就是最大的安全感',next:'q9',tags:['confident']}]},
+    q8b:{chapter:'CHAPTER 4',bg:'bg-disciples',scene:'一战成名，无数人想拜你为师。',question:'你……',options:[{label:'A',text:'只收一个天赋最高的——精比多重要',next:'q9',tags:['elite']},{label:'B',text:'开山立派，建门派传承下去',next:'q9',tags:['legacy']},{label:'C',text:'不收徒，把毕生所学写成书',next:'q9',tags:['scholar']}]},
+    q9:{chapter:'CHAPTER 5',bg:'bg-moonnight',scene:'多年过去，功成名就。月夜，老友举杯问你——',question:'"这一生，最值得的是什么？"',branchOptions:{temple:[{label:'A',text:'"我改了几条规则，后来的人受益了"',next:'q10a',tags:['reform']},{label:'B',text:'"我让国库从空虚到充盈，值了"',next:'q10b',tags:['wealth']},{label:'C',text:'"全身而退还能喝酒——这本身就是本事"',next:'q10c',tags:['freedom']},{label:'D',text:'"我写的策论，后人还在读"',next:'q10d',tags:['legacy']}],jianghu:[{label:'A',text:'"救过的人比杀过的多——值了"',next:'q10a',tags:['reform']},{label:'B',text:'"江湖赚来的银子花得痛快"',next:'q10b',tags:['wealth']},{label:'C',text:'"见过最好的风景，也遇过最好的对手"',next:'q10c',tags:['freedom']},{label:'D',text:'"我留下的功夫和规矩，后人还在用"',next:'q10d',tags:['legacy']}]},options:[{label:'A',text:'"改变了一些规则，让后来的人受益"',next:'q10a',tags:['reform']},{label:'B',text:'"赚够了钱，也花得痛快"',next:'q10b',tags:['wealth']},{label:'C',text:'"见过最好的风景，遇过最好的人"',next:'q10c',tags:['freedom']},{label:'D',text:'"留下了一些东西，后人会记住"',next:'q10d',tags:['legacy']}]},
+    q10a:{chapter:'CHAPTER 5',bg:'bg-throne',scene:'皇帝驾崩前拉着你的手："新帝年幼，朕将天下托付于你。"',question:'你……',options:[{label:'A',text:'鞠躬尽瘁，干到最后一刻',result:'chancellor'},{label:'B',text:'扶上马送一程，然后告老还乡',result:'teacher'},{label:'C',text:'推荐更合适的人，功成身退',result:'advisor'}]},
+    q10b:{chapter:'CHAPTER 5',bg:'bg-village',scene:'你带着积蓄回到故乡，发现家乡还是那个穷山村。',question:'你决定……',options:[{label:'A',text:'投资建设家乡，修路办学',result:'merchant'},{label:'B',text:'开全城最好的馆子，每天研究新菜',result:'chef'},{label:'C',text:'建商业学堂，把经验传给年轻人',result:'bizmaster'}]},
+    q10c:{chapter:'CHAPTER 5',bg:'bg-horizon',scene:'你决定浪迹天涯。临走前只能带一样东西。',question:'你带上了……',options:[{label:'A',text:'一把剑——路上不太平',result:'swordsman'},{label:'B',text:'一支笔——走到哪写到哪',result:'traveler'},{label:'C',text:'什么都不带——自由就是无牵无挂',result:'hermit'}]},
+    q10d:{chapter:'CHAPTER 5',bg:'bg-legacy',scene:'你要将毕生心血留给后世。桌上摆着三样东西。',question:'你选择留下……',options:[{label:'A',text:'一套治国方略，放在朝廷密阁',result:'hanlin'},{label:'B',text:'一本兵法奇书，后世将军必读',result:'general'},{label:'C',text:'一个情报网络，百年后仍在运转',result:'spy'}]}
+};
+
+const RESULTS = {
+    chancellor:{icon:'👑',title:'丞 相',subtitle:'运筹帷幄·决胜千里',portrait:'🧑‍💼',portraitClass:'portrait-chancellor',particles:'📜✨🏛️',desc:'古有诸葛亮，今有你——区别是他摇扇子，你敲键盘。满朝文武都是你的"已读"列表，皇上的烂摊子全靠你兜底。别人叫你劳模，你叫自己"社畜祖师爷"。下辈子想当条咸鱼？不存在的，命运不允许。',modern:'天选打工皇帝 / 老板离不开的那个人',rare:'RARE: 6.2%',partner:'锦衣卫指挥使——你负责背锅，他负责让你知道锅从哪来'},
+    teacher:{icon:'📖',title:'帝 师',subtitle:'一言定社稷',portrait:'👨‍🏫',portraitClass:'portrait-teacher',particles:'📚🎓✨',desc:'你不坐龙椅，但坐龙椅的人得叫你一声"老师"。上课铃一响皇帝都不敢迟到，你批奏折比改作业还熟练。退休后最大的乐趣是看学生治天下——然后默默吐槽"这题我讲过啊"。',modern:'甲方爸爸的爸爸 / 幕后导师天花板',rare:'RARE: 5.1%',partner:'丞相——你负责教，他负责挨骂，完美分工'},
+    advisor:{icon:'🌙',title:'幕后国师',subtitle:'功成不必在我',portrait:'🧙',portraitClass:'portrait-advisor',particles:'🌙⭐🔮',desc:'你是那种"所有大事都跟你有关，但热搜永远没你名字"的神秘人物。丞相以为自己在做决定？其实剧本是你写的。你享受的是在人群中微微一笑"都在我计划之中"的爽感。',modern:'隐藏Boss / 朋友圈从不发但什么都知道',rare:'RARE: 4.8%',partner:'首富商贾——你出点子他出钱，你动嘴他动手'},
+    merchant:{icon:'💰',title:'首富商贾',subtitle:'日进斗金·富可敌国',portrait:'🤵',portraitClass:'portrait-merchant',particles:'💰🪙✨',desc:'别人穿越想当皇帝，你穿越直接当了皇帝的债主。商业版图比大清地图还大，唯一的烦恼——钱太多花不完（不是凡尔赛，是真的）。你修的路比皇帝修的还多，立碑比皇帝还高。',modern:'马爸爸的爸爸 / 古代版带货顶流',rare:'RARE: 8.3%',partner:'翰林学士——你出钱他吹你，双赢'},
+    chef:{icon:'🍜',title:'御膳房主厨',subtitle:'一勺定乾坤',portrait:'👨‍🍳',portraitClass:'portrait-chef',particles:'🔥🍖✨',desc:'皇帝可以换，你不能换——换了你皇帝不想上朝了。你做的红烧肉比圣旨还有号召力，文武百官上朝前先闻今天飘出什么味儿。人生信条：能用美食解决的事，就别动刀动枪。',modern:'干饭人的精神领袖 / 人形多巴胺制造机',rare:'RARE: 7.6%',partner:'江湖侠客——他带你找食材，你负责让食材升天'},
+    bizmaster:{icon:'🎓',title:'商道宗师',subtitle:'授人以渔',portrait:'🧓',portraitClass:'portrait-bizmaster',particles:'📈💡✨',desc:'古代商学院创始人，学费收银子，教出来的是金子。别人退休养花遛鸟，你退休开课收徒——学生日进斗金还得给你交"管理费"。你说这叫"被动收入"，古人表示听不懂但很厉害。',modern:'知识付费鼻祖 / 躺着赚钱的祖师爷',rare:'RARE: 5.7%',partner:'帝师——你教赚钱他教做官，联合招生'},
+    swordsman:{icon:'⚔️',title:'江湖侠客',subtitle:'仗剑走天涯',portrait:'🥷',portraitClass:'portrait-swordsman',particles:'🍃⚔️💨',desc:'你活成了所有打工人的梦想——说走就走说辞就辞，朝廷想招安你？"不约，谢谢。"朋友圈永远是大好河山，别人996你007（0点起床，0件事要做，7天都在玩）。唯一缺点：攒不下钱。',modern:'自由职业天花板 / Gap Year 永动机',rare:'RARE: 9.1%',partner:'御膳房主厨——你找馆子，他说"我来做更好吃的"'},
+    traveler:{icon:'✒️',title:'游记大家',subtitle:'读万卷书·行万里路',portrait:'🧳',portraitClass:'portrait-traveler',particles:'🗺️🌿🦋',desc:'古代版旅行博主，没WiFi全靠一支笔。游记比正史还好看，后人考古全靠你的"打卡笔记"。座右铭："世界那么大，我不只要看看——还要写出来让你们馋。"',modern:'小红书头部博主穿越版 / 行走的种草机',rare:'RARE: 7.2%',partner:'逍遥散仙——你写攻略他当素材，走哪拍哪'},
+    hermit:{icon:'☁️',title:'逍遥散仙',subtitle:'来去如风',portrait:'🧘',portraitClass:'portrait-hermit',particles:'☁️🕊️✨',desc:'你是唯一穿越后没有"系统""任务""使命"的人。别人争天下，你晒太阳。你悟透了：卷赢了又怎样，人生是旷野不是轨道。皇帝请你出山？"陛下，贫道在闭关（睡觉）。"',modern:'精神状态遥遥领先 / 躺平界开山鼻祖',rare:'RARE: 4.3%',partner:'游记大家——他帮你写传记《我的朋友是神仙》'},
+    hanlin:{icon:'📜',title:'翰林学士',subtitle:'文曲星下凡',portrait:'🧑‍💻',portraitClass:'portrait-hanlin',particles:'✒️📖💫',desc:'别人吵架靠嗓门，你靠800字小作文把对方送上热搜。皇帝看你文章拍大腿，大臣看你弹劾信拍胸口。笔下每个字价值千金，唯一遗憾——古代没有打赏功能。',modern:'十万+爆款制造机 / 古代顶流自媒体',rare:'RARE: 8.5%',partner:'首富商贾——你写他投，篇篇十万加'},
+    general:{icon:'🗡️',title:'大将军',subtitle:'百战百胜',portrait:'💂',portraitClass:'portrait-general',particles:'🔥⚔️🏴',desc:'口头禅是"兄弟们跟我冲"而不是"给我冲"——所以大家愿意跟你。简历只有一行："打过的仗没输过"。唯一问题：和平年代浑身不自在，总想找什么东西"攻克"一下。',modern:'天生创业命 / deadline越近越兴奋的变态',rare:'RARE: 7.9%',partner:'幕后国师——你冲锋，他确保你冲对方向'},
+    spy:{icon:'🔍',title:'锦衣卫指挥使',subtitle:'洞察秋毫',portrait:'🕵️',portraitClass:'portrait-spy',particles:'🔍👁️🌑',desc:'你知道谁跟谁有仇、谁偷了奏折、谁昨晚没回家——你甚至没在刻意打听。天生自带雷达，别人的秘密在你面前跟开了弹幕一样。座右铭："我不是在监视你，只是不小心什么都看到了。"',modern:'人形大数据 / 朋友圈考古学家',rare:'RARE: 5.3%',partner:'丞相——你提供瓜，他负责吃瓜后做决策'}
+};
+
+let currentQuestion = 'q1';
+let questionCount = 0;
+let answerHistory = [];
+
+function getBranch() {
+    if (!answerHistory.length) return 'default';
+    const firstNext = answerHistory[0].option.next;
+    if (firstNext === 'q2a') return 'palace';
+    if (firstNext === 'q2b') return 'market';
+    if (firstNext === 'q2c') return 'scholar';
+    if (firstNext === 'q2d') return 'jianghu';
+    return 'default';
+}
+function getMainLine() {
+    for (let i = answerHistory.length - 1; i >= 0; i--) {
+        const next = answerHistory[i].option.next;
+        if (next === 'q6a' || next === 'q6b') return 'temple';
+        if (next === 'q6c' || next === 'q6d') return 'jianghu';
+    }
+    return 'temple';
+}
+
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const page = document.getElementById(id);
+    page.classList.add('active');
+}
+
+function startQuiz() { currentQuestion = 'q1'; questionCount = 0; answerHistory = []; showPage('page-quiz'); renderQuestion(); }
+
+function renderQuestion() {
+    const q = QUESTIONS[currentQuestion];
+    const bg = document.getElementById('sceneBg');
+    bg.classList.remove('showing'); bg.classList.add('fading');
+    setTimeout(() => { bg.className = 'scene-bg fading ' + (q.bg||'bg-wild'); bg.offsetHeight; bg.classList.remove('fading'); bg.classList.add('showing'); }, 200);
+
+    document.getElementById('progressFill').style.width = (questionCount/10*100)+'%';
+    document.getElementById('progressText').textContent = String(questionCount+1).padStart(2,'0')+'/10';
+    document.getElementById('quizChapter').textContent = q.chapter;
+    document.getElementById('quizScene').textContent = q.scene;
+    document.getElementById('quizQuestion').textContent = q.question;
+
+    const illustScene = document.getElementById('illustScene');
+    renderIllustration(currentQuestion);
+
+    let options = q.options;
+    if (q.branchOptions) {
+        if (currentQuestion === 'q5') options = q.branchOptions[getBranch()] || q.options;
+        else if (currentQuestion === 'q9') options = q.branchOptions[getMainLine()] || q.options;
+    }
+
+    const optionsDiv = document.getElementById('quizOptions');
+    optionsDiv.innerHTML = '';
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-label">${opt.label}</span><span>${opt.text}</span>`;
+        btn.onclick = () => selectOption(opt, btn);
+        optionsDiv.appendChild(btn);
+    });
+}
+
+function selectOption(opt, btn) {
+    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answerHistory.push({question:currentQuestion, option:opt});
+    questionCount++;
+    setTimeout(() => { if (opt.result) showResult(opt.result); else { currentQuestion = opt.next; renderQuestion(); } }, 400);
+}
+
+function showResult(resultKey) {
+    showPage('page-loading');
+    setTimeout(() => {
+        const r = RESULTS[resultKey];
+        const portrait = document.getElementById('resultPortrait');
+        portrait.className = 'result-portrait ' + (r.portraitClass||'');
+        document.getElementById('portraitFigure').textContent = r.portrait||r.icon;
+        const particles = document.getElementById('portraitParticles');
+        const pChars = (r.particles||'✨').split('');
+        particles.innerHTML = pChars.map((p,i) => {
+            const x = 15+Math.floor(i*70/pChars.length)+Math.floor(i*7%20);
+            const y = 20+Math.floor(i*13%60);
+            return `<span style="position:absolute;left:${x}%;top:${y}%;font-size:${20+i%3*8}px;animation:blink ${2+i*0.3}s ease ${i*0.5}s infinite;">${p}</span>`;
+        }).join('');
+        document.getElementById('resultIcon').textContent = r.icon;
+        document.getElementById('resultTitle').textContent = r.title;
+        document.getElementById('resultSubtitle').textContent = r.subtitle;
+        document.getElementById('resultDesc').textContent = r.desc;
+        document.getElementById('resultModern').textContent = r.modern;
+        document.getElementById('resultRare').textContent = r.rare;
+        document.getElementById('resultPartnerText').textContent = r.partner;
+        window._currentResult = r;
+        showPage('page-result');
+    }, 2800);
+}
+
+function retry() { showPage('page-start'); }
+
+function showPoster() {
+    const r = window._currentResult;
+    const canvas = document.getElementById('posterCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = 600, H = 950;
+    canvas.width = W; canvas.height = H;
+
+    ctx.fillStyle = '#262b44'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = '#ffcd75'; ctx.lineWidth = 6; ctx.strokeRect(16,16,W-32,H-32);
+    ctx.strokeStyle = '#5d275d'; ctx.lineWidth = 3; ctx.strokeRect(24,24,W-48,H-48);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffcd75'; ctx.font = 'bold 16px "Press Start 2P", monospace';
+    ctx.fillText('ANCIENT CAREER', W/2, 70);
+    ctx.fillStyle = '#73eff7'; ctx.font = '12px "Press Start 2P", monospace';
+    ctx.fillText('TEST RESULT', W/2, 95);
+
+    ctx.font = '72px serif'; ctx.fillText(r.icon, W/2, 180);
+    ctx.fillStyle = '#ffcd75'; ctx.font = 'bold 36px "PingFang SC","Microsoft YaHei"';
+    ctx.fillText(r.title, W/2, 240);
+    ctx.fillStyle = '#ef7d57'; ctx.font = '16px "PingFang SC"';
+    ctx.fillText(r.subtitle, W/2, 272);
+
+    ctx.fillStyle = '#f4f4f4'; ctx.font = '13px "PingFang SC"';
+    const lines = wrapText(ctx, r.desc, W-100);
+    let y = 310;
+    lines.forEach(l => { ctx.fillText(l,W/2,y); y+=22; });
+
+    y += 15;
+    ctx.fillStyle = '#29366f'; roundRect(ctx,60,y-16,W-120,44,0); ctx.fill();
+    ctx.strokeStyle = '#5d275d'; ctx.lineWidth = 2; roundRect(ctx,60,y-16,W-120,44,0); ctx.stroke();
+    ctx.fillStyle = '#38b764'; ctx.font = '10px "Press Start 2P",monospace'; ctx.fillText('JOB TRUTH',W/2,y+2);
+    ctx.fillStyle = '#ffcd75'; ctx.font = 'bold 14px "PingFang SC"'; ctx.fillText(r.modern,W/2,y+24);
+
+    y += 55;
+    ctx.fillStyle = '#b13e53'; ctx.font = '11px "Press Start 2P",monospace'; ctx.fillText(r.rare, W/2, y);
+
+    // 人物画像
+    y += 30;
+    ctx.fillStyle = '#1a1c2c'; roundRect(ctx,80,y,W-160,100,0); ctx.fill();
+    ctx.strokeStyle = '#5d275d'; ctx.lineWidth = 3; roundRect(ctx,80,y,W-160,100,0); ctx.stroke();
+    ctx.font = '56px serif'; ctx.fillText(r.portrait||r.icon, W/2, y+68);
+    const pChars = (r.particles||'✨').split('');
+    ctx.font = '18px serif'; ctx.globalAlpha = 0.6;
+    pChars.forEach((p,i)=>{ ctx.fillText(p, 110+i*130, y+30+(i%2)*40); });
+    ctx.globalAlpha = 1;
+
+    // 钦此
+    ctx.save(); ctx.translate(W-70,60); ctx.rotate(-0.15);
+    ctx.strokeStyle = '#b13e53'; ctx.lineWidth = 3;
+    ctx.strokeRect(-22,-22,44,44);
+    ctx.fillStyle = '#b13e53'; ctx.font = 'bold 18px "PingFang SC"';
+    ctx.fillText('钦此',0,6); ctx.restore();
+
+    document.getElementById('posterOverlay').classList.add('active');
+}
+function closePoster() { document.getElementById('posterOverlay').classList.remove('active'); }
+function wrapText(ctx,text,maxW) { const l=[]; let s=''; for(let i=0;i<text.length;i++){const t=s+text[i];if(ctx.measureText(t).width>maxW){l.push(s);s=text[i];}else s=t;} if(s)l.push(s); return l; }
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+</script>
+</body>
+</html>
