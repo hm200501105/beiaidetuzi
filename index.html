@@ -490,6 +490,7 @@ chancellor:{icon:'\u{1F451}',title:'丞 相',subtitle:'运筹帷幄\xb7决胜千
 advisor:{icon:'\u{1F319}',title:'幕后国师',subtitle:'功成不必在我',portrait:'\u{1F9D9}',portraitClass:'portrait-advisor',particles:'\u{1F319}⭐\u{1F52E}',desc:'所有大事都跟你有关，但热搜永远没你名字。丞相以为自己在做决定？其实剧本是你写的。你享受在人群中微微一笑"都在我计划之中"的爽感。',modern:'隐藏Boss / 朋友圈从不发但什么都知道',rare:'RARE: 4.8%',partner:'首富商贾——你出点子他出钱'},
 merchant:{icon:'\u{1F4B0}',title:'首富商贾',subtitle:'日进斗金\xb7富可敌国',portrait:'\u{1F935}',portraitClass:'portrait-merchant',particles:'\u{1F4B0}\u{1FA99}✨',desc:'别人穿越想当皇帝，你穿越直接当了皇帝的债主。唯一的烦恼——钱太多花不完。你修的路比皇帝还多，立碑比皇帝还高。',modern:'马爸爸的爸爸 / 古代版带货顶流',rare:'RARE: 8.3%',partner:'翰林学士——你出钱他吹你，双赢'},
 chef:{icon:'\u{1F35C}',title:'御膳房主厨',subtitle:'一勺定乾坤',portrait:'\u{1F468}‍\u{1F373}',portraitClass:'portrait-chef',particles:'\u{1F525}\u{1F356}✨',desc:'皇帝可以换你不能换——换了你皇帝不想上朝了。你做的红烧肉比圣旨还有号召力。人生信条：能用美食解决的事就别动刀动枪。',modern:'干饭人精神领袖 / 人形多巴胺制造机',rare:'RARE: 7.6%',partner:'江湖侠客——他找食材你让食材升天'},
+landlord:{icon:'\u{1F3E1}',title:'田庄地主',subtitle:'躺着把钱赚了',portrait:'\u{1F9D1}‍\u{1F33E}',portraitClass:'portrait-merchant',particles:'\u{1F33E}\u{1F4B0}☀️',desc:'别人起早贪黑做生意，你睡到日上三竿——因为你买的地在替你赚钱。你是"睡后收入"的发明者，古代被动收入第一人。你的人生哲学：钱是用来买自由的，不是用来换命的。管家替你收租，你只负责数钱和晒太阳。',modern:'包租公祖师爷 / 睡后收入发明者',rare:'RARE: 6.8%',partner:'逍遥散仙——你俩都躺着，区别是你躺着赚钱'},
 hanlin:{icon:'\u{1F4DC}',title:'翰林学士',subtitle:'文曲星下凡',portrait:'\u{1F9D1}‍\u{1F4BB}',portraitClass:'portrait-hanlin',particles:'✒️\u{1F4D6}\u{1F4AB}',desc:'别人吵架靠嗓门，你靠800字小作文把对方送上热搜。笔下每个字价值千金，唯一遗憾——古代没有打赏功能。',modern:'十万+爆款制造机 / 古代顶流自媒体',rare:'RARE: 8.5%',partner:'首富商贾——你写他投，篇篇十万加'},
 teacher:{icon:'\u{1F4D6}',title:'帝 师',subtitle:'一言定社稷',portrait:'\u{1F468}‍\u{1F3EB}',portraitClass:'portrait-teacher',particles:'\u{1F4DA}\u{1F393}✨',desc:'你不坐龙椅，但坐龙椅的人得叫你"老师"。退休后最大乐趣是看学生治天下——然后默默吐槽"这题我讲过啊"。',modern:'甲方爸爸的爸爸 / 幕后导师天花板',rare:'RARE: 5.1%',partner:'丞相——你负责教，他负责挨骂'},
 general:{icon:'\u{1F5E1}️',title:'大将军',subtitle:'百战百胜',portrait:'\u{1F482}',portraitClass:'portrait-general',particles:'\u{1F525}⚔️\u{1F3F4}',desc:'口头禅是"跟我冲"不是"给我冲"——所以大家愿意跟你。简历一行字："打过的仗没输过"。唯一问题：和平年代浑身不自在。',modern:'天生创业命 / deadline越近越兴奋',rare:'RARE: 7.9%',partner:'幕后国师——你冲锋他确保冲对方向'},
@@ -511,10 +512,10 @@ function calcResult(){
     const p=top[0];
     const map={
         strategy:()=>s.justice>=4?'spy':s.wealth>=4?'advisor':'chancellor',
-        wealth:()=>s.scholar>=4?'bizmaster':s.strategy>=4?'merchant':'chef',
+        wealth:()=>s.scholar>=4?'bizmaster':s.strategy>=4?'merchant':'landlord',
         scholar:()=>s.justice>=4?'hanlin':s.strategy>=3?'teacher':'traveler',
         military:()=>s.freedom>=4?'swordsman':s.strategy>=4?'general':'swordsman',
-        freedom:()=>s.scholar>=4?'traveler':s.military>=3?'swordsman':'hermit',
+        freedom:()=>s.scholar>=4?'traveler':s.military>=3?'swordsman':s.wealth>=3?'chef':'hermit',
         justice:()=>s.scholar>=4?'hanlin':s.military>=3?'general':'teacher'
     };
     return(map[p]||(() =>'chancellor'))();
